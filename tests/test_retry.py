@@ -65,6 +65,36 @@ class RetryTests(unittest.TestCase):
         with self.assertRaises(TypeError):
             retry(func, max_retries=3, backoff=0)
 
+    def test_on_retry_called_per_attempt_not_on_final_failure(self):
+        calls = []
+
+        def func():
+            raise OSError("fail")
+
+        with self.assertRaises(OSError):
+            retry(func, max_retries=2, backoff=0, on_retry=lambda e, attempt: calls.append(attempt))
+
+        # 2 retries happen (after attempt 1 and attempt 2), but not after the
+        # 3rd, final attempt that exhausts max_retries and re-raises.
+        self.assertEqual(calls, [1, 2])
+
+    def test_on_retry_not_called_when_should_retry_is_false(self):
+        calls = []
+
+        def func():
+            raise ValueError("not retryable")
+
+        with self.assertRaises(ValueError):
+            retry(
+                func,
+                max_retries=3,
+                backoff=0,
+                should_retry=lambda e: False,
+                on_retry=lambda e, attempt: calls.append(attempt),
+            )
+
+        self.assertEqual(calls, [])
+
     def test_forwards_args_and_kwargs(self):
         def func(a, b, c=None):
             return (a, b, c)

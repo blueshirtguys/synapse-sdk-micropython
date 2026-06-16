@@ -56,6 +56,7 @@ class SynapseClient:
         max_retries: int = 3,
         retry_backoff: float = 1.0,
         timeout: float = 5.0,
+        on_retry=None,
     ):
         """
         Args:
@@ -71,6 +72,10 @@ class SynapseClient:
             timeout: socket timeout in seconds for connecting to and reading
                 from the API. Increase this on slow/unreliable networks
                 (e.g. cellular) to avoid premature timeouts.
+            on_retry: optional callback called as on_retry(exception, attempt)
+                each time a transient failure triggers a retry. Useful for
+                logging/diagnostics in the field; not called on the final,
+                non-retried failure.
         """
         if not isinstance(api_key, str) or not api_key:
             raise ValueError("api_key is required")
@@ -87,6 +92,7 @@ class SynapseClient:
         self.max_retries = max_retries
         self.retry_backoff = retry_backoff
         self.timeout = timeout
+        self.on_retry = on_retry
 
     def publishReadings(self, payload: dict):
         """Publish a batch of sensor readings to the Synapse API.
@@ -118,6 +124,7 @@ class SynapseClient:
             max_retries=self.max_retries,
             backoff=self.retry_backoff,
             should_retry=_should_retry,
+            on_retry=self.on_retry,
         )
 
     def _send_readings(self, payload: dict):

@@ -14,6 +14,9 @@ mip.install("github:<org>/synapse-sdk-micropython")
 
 ## Usage
 
+See [examples/main.py](examples/main.py) for a complete, runnable device script (WiFi connect,
+clock sync, periodic publish loop). Minimal version:
+
 ```python
 import network
 import ntptime
@@ -56,6 +59,7 @@ except OSError as e:
 | `max_retries` | Number of retries for transient failures (connection errors, 5xx, 429). Default `3`. Set `0` to disable. |
 | `retry_backoff` | Base delay in seconds between retries (grows linearly with attempt number). Default `1.0`. |
 | `timeout` | Socket timeout in seconds for connecting/reading. Increase on slow networks (e.g. cellular). Default `5.0`. |
+| `on_retry` | Optional `fn(exception, attempt)` called each time a transient failure triggers a retry — useful for logging in the field. Not called on the final failure. Default `None`. |
 
 ## Error handling
 
