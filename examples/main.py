@@ -29,11 +29,11 @@ def connect_wifi():
             time.sleep(0.5)
 
 
-def sync_clock():
+def try_sync_clock():
     try:
         ntptime.settime()
     except OSError:
-        pass  # proceed with whatever time the RTC already has
+        pass
 
 
 def read_sensors():
@@ -43,7 +43,7 @@ def read_sensors():
 
 def main():
     connect_wifi()
-    sync_clock()
+    try_sync_clock()
 
     client = SynapseClient(api_key=API_KEY, api_url=API_URL)
 

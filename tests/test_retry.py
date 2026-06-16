@@ -40,11 +40,11 @@ class RetryTests(unittest.TestCase):
             attempts.append(1)
             raise OSError("always fails")
 
+        max_retries = 2
         with self.assertRaises(OSError):
-            retry(func, max_retries=2, backoff=0)
+            retry(func, max_retries=max_retries, backoff=0)
 
-        # initial attempt + 2 retries = 3 calls
-        self.assertEqual(len(attempts), 3)
+        self.assertEqual(len(attempts), max_retries + 1)
 
     def test_should_retry_false_stops_immediately(self):
         attempts = []
@@ -67,16 +67,15 @@ class RetryTests(unittest.TestCase):
 
     def test_on_retry_called_per_attempt_not_on_final_failure(self):
         calls = []
+        max_retries = 2
 
         def func():
             raise OSError("fail")
 
         with self.assertRaises(OSError):
-            retry(func, max_retries=2, backoff=0, on_retry=lambda e, attempt: calls.append(attempt))
+            retry(func, max_retries=max_retries, backoff=0, on_retry=lambda e, attempt: calls.append(attempt))
 
-        # 2 retries happen (after attempt 1 and attempt 2), but not after the
-        # 3rd, final attempt that exhausts max_retries and re-raises.
-        self.assertEqual(calls, [1, 2])
+        self.assertEqual(calls, list(range(1, max_retries + 1)))
 
     def test_on_retry_not_called_when_should_retry_is_false(self):
         calls = []

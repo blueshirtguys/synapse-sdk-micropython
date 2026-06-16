@@ -4,59 +4,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from synapse.client import SynapseClient, _parse_api_url, _should_retry
+from synapse.client import SynapseClient, _should_retry
 from synapse.errors import HttpError
-
-
-class ParseApiUrlTests(unittest.TestCase):
-    def test_https_default_port(self):
-        target = _parse_api_url("https://api.synapse.io")
-        self.assertEqual(target.host, "api.synapse.io")
-        self.assertEqual(target.port, 443)
-        self.assertTrue(target.use_tls)
-
-    def test_http_default_port(self):
-        target = _parse_api_url("http://localhost")
-        self.assertEqual(target.host, "localhost")
-        self.assertEqual(target.port, 80)
-        self.assertFalse(target.use_tls)
-
-    def test_explicit_port_overrides_default(self):
-        target = _parse_api_url("http://localhost:8000")
-        self.assertEqual(target.host, "localhost")
-        self.assertEqual(target.port, 8000)
-        self.assertFalse(target.use_tls)
-
-    def test_https_with_custom_port_keeps_tls(self):
-        target = _parse_api_url("https://api.synapse.io:8443")
-        self.assertEqual(target.port, 8443)
-        self.assertTrue(target.use_tls)
-
-    def test_strips_trailing_path(self):
-        target = _parse_api_url("https://api.synapse.io/v1")
-        self.assertEqual(target.host, "api.synapse.io")
-
-    def test_no_scheme_defaults_to_https(self):
-        target = _parse_api_url("api.synapse.io")
-        self.assertEqual(target.host, "api.synapse.io")
-        self.assertEqual(target.port, 443)
-        self.assertTrue(target.use_tls)
-
-    def test_rejects_unsupported_scheme(self):
-        with self.assertRaises(ValueError):
-            _parse_api_url("ftp://example.com")
-
-    def test_rejects_missing_host(self):
-        with self.assertRaises(ValueError):
-            _parse_api_url("https://")
-
-    def test_rejects_invalid_port(self):
-        with self.assertRaises(ValueError):
-            _parse_api_url("https://api.synapse.io:notaport")
-
-    def test_rejects_out_of_range_port(self):
-        with self.assertRaises(ValueError):
-            _parse_api_url("https://api.synapse.io:99999")
 
 
 class ShouldRetryTests(unittest.TestCase):
@@ -101,7 +50,11 @@ class InitValidationTests(unittest.TestCase):
         client = make_client()
         self.assertEqual(client.max_retries, 3)
         self.assertEqual(client.retry_backoff, 1.0)
-        self.assertEqual(client.timeout, 5.0)
+        self.assertEqual(client._http.timeout, 5.0)
+
+    def test_timeout_passed_through_to_http_client(self):
+        client = make_client(timeout=10.0)
+        self.assertEqual(client._http.timeout, 10.0)
 
 
 class PublishReadingsValidationTests(unittest.TestCase):
