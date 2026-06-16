@@ -1,5 +1,7 @@
 # synapse-sdk-micropython
 
+[![Tests](https://github.com/blueshirtguys/synapse-sdk-micropython/actions/workflows/tests.yml/badge.svg)](https://github.com/blueshirtguys/synapse-sdk-micropython/actions/workflows/tests.yml)
+
 MicroPython SDK for publishing device sensor readings to the Synapse API.
 
 ## Install
@@ -9,7 +11,7 @@ or install with `mip`:
 
 ```python
 import mip
-mip.install("github:<org>/synapse-sdk-micropython")
+mip.install("github:blueshirtguys/synapse-sdk-micropython")
 ```
 
 ## Usage

@@ -75,6 +75,7 @@ class BuildRequestTests(unittest.TestCase):
     def test_includes_method_path_and_headers(self):
         client = HttpClient("https://api.synapse.io")
         request_bytes = client._build_request(
+            "POST",
             "/api/devices/readings",
             b'{"a": 1}',
             headers={"Authorization": "Bearer key"},

@@ -51,14 +51,19 @@ class HttpClient:
 
     def post(self, path: str, body_bytes: bytes, headers: dict) -> int:
         """Sends a POST request and returns the response status code."""
-        request_bytes = self._build_request(path, body_bytes, headers)
+        return self._request("POST", path, body_bytes, headers)
+
+    def _request(self, method: str, path: str, body_bytes: bytes, headers: dict) -> int:
+        request_bytes = self._build_request(method, path, body_bytes, headers)
         response = self._transmit(request_bytes)
         return self._parse_status(response)
 
-    def _build_request(self, path: str, body_bytes: bytes, headers: dict) -> bytes:
-        header_lines = "".join(f"{name}: {value}\r\n" for name, value in headers.items())
+    def _build_request(self, method: str, path: str, body_bytes: bytes, headers: dict) -> bytes:
+        header_lines = "".join(
+            f"{name}: {value}\r\n" for name, value in headers.items()
+        )
         request = (
-            f"POST {path} HTTP/1.1\r\n"
+            f"{method} {path} HTTP/1.1\r\n"
             f"Host: {self.host}\r\n"
             f"Content-Length: {len(body_bytes)}\r\n"
             f"{header_lines}"
