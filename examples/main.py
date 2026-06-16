@@ -15,8 +15,8 @@ from synapse import HttpError, SynapseClient
 
 WIFI_SSID = "your-ssid"
 WIFI_PASSWORD = "your-password"
-API_KEY = "your-api-key"
-API_URL = "https://api.synapse.io"
+API_KEY = "sdt_your-token-here="
+API_URL = "https://api.synapse.matthewcoleman.dev"
 PUBLISH_INTERVAL_S = 60
 
 

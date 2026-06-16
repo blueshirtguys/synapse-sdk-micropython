@@ -40,8 +40,8 @@ except OSError:
     pass  # proceed with whatever time the RTC already has
 
 client = SynapseClient(
-    api_key="your-api-key",
-    api_url="https://api.synapse.io",
+    api_key="sdt_your-token-here=",
+    api_url="https://api.synapse.matthewcoleman.dev",
 )
 
 try:
@@ -57,7 +57,7 @@ except OSError as e:
 | Argument | Description |
 |---|---|
 | `api_key` | Synapse API key, sent as a Bearer token. |
-| `api_url` | Base URL of the API, e.g. `https://api.synapse.io`. Supports `http://` for local/dev endpoints. |
+| `api_url` | Base URL of the API, e.g. `https://api.synapse.matthewcoleman.dev`. Supports `http://` for local/dev endpoints. |
 | `max_retries` | Number of retries for transient failures (connection errors, 5xx, 429). Default `3`. Set `0` to disable. |
 | `retry_backoff` | Base delay in seconds between retries (grows linearly with attempt number). Default `1.0`. |
 | `timeout` | Socket timeout in seconds for connecting/reading. Increase on slow networks (e.g. cellular). Default `5.0`. |
