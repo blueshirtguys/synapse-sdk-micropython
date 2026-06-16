@@ -114,7 +114,7 @@ class SynapseClient:
         finally:
             s.close()
 
-        status = int(response.split(b" ")[1])
+        status = int(response.split(b" ", 2)[1])
 
         return self._check_status(status)
 
