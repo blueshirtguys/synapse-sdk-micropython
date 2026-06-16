@@ -23,14 +23,25 @@ def _parse_api_url(api_url: str):
     if not sep:
         scheme, rest = "https", api_url
 
+    if scheme not in ("http", "https"):
+        raise ValueError("api_url must use http:// or https://, got: " + scheme)
+
     host_port, _, _path = rest.partition("/")
 
     if ":" in host_port:
         host, port_str = host_port.split(":", 1)
-        port = int(port_str)
+        try:
+            port = int(port_str)
+        except ValueError:
+            raise ValueError("api_url has an invalid port: " + port_str)
     else:
         host = host_port
         port = 443 if scheme == "https" else 80
+
+    if not host:
+        raise ValueError("api_url is missing a host")
+    if not (0 < port < 65536):
+        raise ValueError("api_url port out of range: " + str(port))
 
     return ApiTarget(host, port, scheme == "https")
 
