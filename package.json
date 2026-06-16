@@ -1,0 +1,9 @@
+{
+    "urls": [
+        ["synapse/__init__.py", "synapse/__init__.py"],
+        ["synapse/client.py", "synapse/client.py"],
+        ["synapse/errors.py", "synapse/errors.py"],
+        ["synapse/_retry.py", "synapse/_retry.py"]
+    ],
+    "version": "0.1.0"
+}
