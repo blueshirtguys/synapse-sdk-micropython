@@ -73,10 +73,11 @@ class HttpClient:
         return request.encode("utf-8") + body_bytes
 
     def _transmit(self, request_bytes: bytes) -> bytes:
+        addr = socket.getaddrinfo(self.host, self.port, 0, socket.SOCK_STREAM)[0][-1]
         s = socket.socket()
         try:
             s.settimeout(self.timeout)
-            s.connect((self.host, self.port))
+            s.connect(addr)
             if self.use_tls:
                 ca_cert = __file__.rsplit("/", 1)[0] + "/ca.der"
                 ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
