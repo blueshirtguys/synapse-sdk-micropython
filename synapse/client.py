@@ -93,7 +93,9 @@ class SynapseClient:
             raise ValueError("recorded_at must be a positive Unix timestamp integer")
 
         def send():
-            t = time.gmtime(recorded_at)
+            # time.gmtime() on MicroPython uses the 2000-01-01 epoch; subtract
+            # the offset to convert our Unix timestamp back before formatting.
+            t = time.gmtime(recorded_at - 946684800)
             timestamp = "{:04d}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}Z".format(
                 t[0], t[1], t[2], t[3], t[4], t[5]
             )
