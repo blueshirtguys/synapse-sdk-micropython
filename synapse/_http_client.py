@@ -78,8 +78,10 @@ class HttpClient:
             s.settimeout(self.timeout)
             s.connect((self.host, self.port))
             if self.use_tls:
+                ca_cert = __file__.rsplit("/", 1)[0] + "/ca.der"
                 ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-                ctx.verify_mode = ssl.CERT_NONE
+                with open(ca_cert, "rb") as f:
+                    ctx.load_verify_locations(cadata=f.read())
                 s = ctx.wrap_socket(s, server_hostname=self.host)
 
             s.send(request_bytes)

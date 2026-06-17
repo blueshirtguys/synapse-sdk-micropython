@@ -4,7 +4,8 @@
         ["synapse/client.py", "synapse/client.py"],
         ["synapse/errors.py", "synapse/errors.py"],
         ["synapse/_retry.py", "synapse/_retry.py"],
-        ["synapse/_http_client.py", "synapse/_http_client.py"]
+        ["synapse/_http_client.py", "synapse/_http_client.py"],
+        ["synapse/ca.der", "synapse/ca.der"]
     ],
     "version": "0.1.0"
 }
