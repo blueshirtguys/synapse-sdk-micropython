@@ -33,11 +33,14 @@ wlan.connect("your-ssid", "your-password")
 while not wlan.isconnected():
     time.sleep(0.5)
 
-# Sync the device clock so `recorded_at` timestamps are meaningful
+# Sync the device clock so recorded_at timestamps are accurate
 try:
     ntptime.settime()
 except OSError:
     pass  # proceed with whatever time the RTC already has
+
+# Convert MicroPython epoch (2000-01-01) to Unix epoch (1970-01-01)
+recorded_at = time.time() + 946684800
 
 client = SynapseClient(
     api_key="sdt_your-token-here=",
@@ -45,7 +48,7 @@ client = SynapseClient(
 )
 
 try:
-    client.publishReadings({"temp": 21.5, "humidity": 47})
+    client.publishReadings({"temp": 21.5, "humidity": 47}, recorded_at)
 except HttpError as e:
     print("Synapse API rejected the request:", e.status, e)
 except OSError as e:

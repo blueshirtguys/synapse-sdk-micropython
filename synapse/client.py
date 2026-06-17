@@ -61,16 +61,20 @@ class SynapseClient:
         self.retry_backoff = retry_backoff
         self.on_retry = on_retry
 
-    def publishReadings(self, payload: dict):
+    def publishReadings(self, payload: dict, recorded_at: int):
         """Publish a batch of sensor readings to the Synapse API.
 
         Args:
             payload: a non-empty dict mapping sensor label (str) to its
                 current reading (int or float), e.g. {"temp": 21.5}.
+            recorded_at: Unix timestamp (seconds since 1970-01-01) of when
+                the readings were captured. On MicroPython, use
+                clock.unix_time() after syncing NTP to get the correct value.
 
         Raises:
             ValueError: if payload is not a non-empty dict of numeric
-                readings keyed by string labels.
+                readings keyed by string labels, or if recorded_at is not
+                a positive integer.
             HttpError: if the API rejects the request (e.g. bad auth,
                 malformed request) after any applicable retries.
             OSError: if a connection-level failure persists past the
@@ -85,10 +89,17 @@ class SynapseClient:
             if isinstance(value, bool) or not isinstance(value, (int, float)):
                 raise ValueError(f"payload[{label!r}] must be a number, got {value!r}")
 
+        if not isinstance(recorded_at, int) or recorded_at <= 0:
+            raise ValueError("recorded_at must be a positive Unix timestamp integer")
+
         def send():
+            t = time.gmtime(recorded_at)
+            timestamp = "{:04d}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}Z".format(
+                t[0], t[1], t[2], t[3], t[4], t[5]
+            )
             body = {
                 "readings": {k: v for k, v in payload.items()},
-                "recorded_at": time.time(),
+                "recorded_at": timestamp,
             }
             body_bytes = json.dumps(body).encode("utf-8")
 
