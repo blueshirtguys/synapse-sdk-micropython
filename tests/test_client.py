@@ -61,29 +61,29 @@ class PublishReadingsValidationTests(unittest.TestCase):
     def test_rejects_non_dict_payload(self):
         client = make_client()
         with self.assertRaises(ValueError):
-            client.publishReadings(None)
+            client.publishReadings(None, 1000000)
         with self.assertRaises(ValueError):
-            client.publishReadings([1, 2, 3])
+            client.publishReadings([1, 2, 3], 1000000)
 
     def test_rejects_empty_payload(self):
         client = make_client()
         with self.assertRaises(ValueError):
-            client.publishReadings({})
+            client.publishReadings({}, 1000000)
 
     def test_rejects_non_string_keys(self):
         client = make_client()
         with self.assertRaises(ValueError):
-            client.publishReadings({1: 2.0})
+            client.publishReadings({1: 2.0}, 1000000)
 
     def test_rejects_bool_values(self):
         client = make_client()
         with self.assertRaises(ValueError):
-            client.publishReadings({"flag": True})
+            client.publishReadings({"flag": True}, 1000000)
 
     def test_rejects_non_numeric_values(self):
         client = make_client()
         with self.assertRaises(ValueError):
-            client.publishReadings({"temp": "21.5"})
+            client.publishReadings({"temp": "21.5"}, 1000000)
 
 
 class CheckStatusTests(unittest.TestCase):
