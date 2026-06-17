@@ -78,7 +78,9 @@ class HttpClient:
             s.settimeout(self.timeout)
             s.connect((self.host, self.port))
             if self.use_tls:
-                s = ssl.wrap_socket(s, server_hostname=self.host)
+                ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+                ctx.verify_mode = ssl.CERT_NONE
+                s = ctx.wrap_socket(s, server_hostname=self.host)
 
             s.send(request_bytes)
 
